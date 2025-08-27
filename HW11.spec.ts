@@ -4,9 +4,6 @@ import { OrderDto } from './dto/riskCalculation_Dto';
 
 const url = 'https://backend.tallinn-learning.ee/api/loan-calc/decision';
 
-// Регулярка для проверки JWT
-const jwtRegex = /^eyJhb[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
-
 test('positive order returns 200 and contains applicationId', async ({ request }) => {
     const requestBody = new OrderDto(600, 0, 20, 1500, 12);
     const res = await request.post(url, { data: requestBody });
@@ -43,13 +40,11 @@ test('age under 16 returns 200', async ({ request }) => {
     expect.soft(res.status()).toBe(StatusCodes.OK);
 });
 
-// Негативные сценарии по другим методам
 test('GET request instead of POST returns 405 or 400', async ({ request }) => {
     const res = await request.get(url);
     expect.soft([StatusCodes.METHOD_NOT_ALLOWED, StatusCodes.BAD_REQUEST]).toContain(res.status());
 });
 
-// Негативные сценарии по некорректной структуре тела
 test('POST with invalid body structure returns 400', async ({ request }) => {
     const invalidBody = { wrongField: 123, anotherField: 'test' };
     const res = await request.post(url, { data: invalidBody });
